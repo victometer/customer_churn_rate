@@ -13,6 +13,7 @@
     <_.fcp.ObjectModelTableType.true...ObjectModelTableType />
     <_.fcp.SchemaViewerObjectModel.true...SchemaViewerObjectModel />
     <SheetIdentifierTracking />
+    <SortTagCleanup />
     <_.fcp.VConnDownstreamExtractsWithWarnings.true...VConnDownstreamExtractsWithWarnings />
     <WindowsPersistSimpleIdentifiers />
   </document-format-change-manifest>
@@ -517,6 +518,10 @@
         </metadata-records>
       </connection>
       <aliases enabled='yes' />
+      <column caption='Age (bin)' datatype='integer' name='[Age (bin)]' role='dimension' type='ordinal'>
+        <calculation class='bin' decimals='0' formula='[Age]' peg='0' size='5' />
+      </column>
+      <column datatype='integer' name='[Age]' role='measure' type='quantitative' />
       <column caption='Number of Customers' datatype='integer' name='[Calculation_635289039898890240]' role='measure' type='quantitative'>
         <calculation class='tableau' formula='COUNT([Customer ID])' />
       </column>
@@ -1141,8 +1146,8 @@
         </view>
         <style>
           <style-rule element='axis'>
-            <encoding attr='space' class='0' field='[federated.15312321wrxb7m1456cdx1v0qw9c].[Longitude (generated)]' field-type='quantitative' max='-8056691.3820461761' min='-13494778.734870186' projection='EPSG:3857' range-type='fixed' scope='cols' type='space' />
-            <encoding attr='space' class='0' field='[federated.15312321wrxb7m1456cdx1v0qw9c].[Latitude (generated)]' field-type='quantitative' max='8818758.3121455591' min='611552.92237270577' projection='EPSG:3857' range-type='fixed' scope='rows' type='space' />
+            <encoding attr='space' class='0' field='[federated.15312321wrxb7m1456cdx1v0qw9c].[Longitude (generated)]' field-type='quantitative' max='32440684.539847966' min='26116309.666960448' projection='EPSG:3857' range-type='fixed' scope='cols' type='space' />
+            <encoding attr='space' class='0' field='[federated.15312321wrxb7m1456cdx1v0qw9c].[Latitude (generated)]' field-type='quantitative' max='8020954.9407827035' min='-1523842.7382674173' projection='EPSG:3857' range-type='fixed' scope='rows' type='space' />
           </style-rule>
           <style-rule element='map'>
             <format attr='washout' value='0.0' />
@@ -1368,6 +1373,165 @@
       </table>
       <simple-id uuid='{388E2C46-A46C-4870-8DD5-6D4209E02579}' />
     </worksheet>
+    <worksheet name='customer age vs churn rate'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Databel - Data' name='federated.15312321wrxb7m1456cdx1v0qw9c' />
+          </datasources>
+          <datasource-dependencies datasource='federated.15312321wrxb7m1456cdx1v0qw9c'>
+            <column caption='Age (bin)' datatype='integer' name='[Age (bin)]' role='dimension' type='ordinal'>
+              <calculation class='bin' decimals='0' formula='[Age]' peg='0' size='5' />
+            </column>
+            <column datatype='integer' name='[Age]' role='measure' type='quantitative' />
+            <column caption='Number of Customers' datatype='integer' name='[Calculation_635289039898890240]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='COUNT([Customer ID])' />
+            </column>
+            <column caption='Churned' datatype='integer' name='[Calculation_635289039899938818]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Churn Label] = &quot;Yes&quot; THEN 1 ELSE 0 END' />
+            </column>
+            <column caption='Number of Churned Customers' datatype='integer' name='[Calculation_635289039900139523]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='SUM([Calculation_635289039899938818])' />
+            </column>
+            <column caption='Churn Rate' datatype='real' default-format='p0.00%' name='[Calculation_635289039900323844]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='[Calculation_635289039900139523] / [Calculation_635289039898890240]' />
+            </column>
+            <column datatype='string' name='[Churn Label]' role='dimension' type='nominal' />
+            <column datatype='string' name='[Customer ID]' role='dimension' type='nominal' />
+            <column-instance column='[Age (bin)]' derivation='None' name='[none:Age (bin):ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Calculation_635289039898890240]' derivation='User' name='[usr:Calculation_635289039898890240:qk]' pivot='key' type='quantitative' />
+            <column-instance column='[Calculation_635289039900323844]' derivation='User' name='[usr:Calculation_635289039900323844:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='axis'>
+            <encoding attr='space' class='0' field='[federated.15312321wrxb7m1456cdx1v0qw9c].[usr:Calculation_635289039898890240:qk]' field-type='quantitative' fold='true' scope='rows' type='space' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+            <encodings>
+              <color column='[federated.15312321wrxb7m1456cdx1v0qw9c].[:Measure Names]' />
+            </encodings>
+          </pane>
+          <pane id='1' selection-relaxation-option='selection-relaxation-allow' y-axis-name='[federated.15312321wrxb7m1456cdx1v0qw9c].[usr:Calculation_635289039900323844:qk]'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+            <encodings>
+              <color column='[federated.15312321wrxb7m1456cdx1v0qw9c].[:Measure Names]' />
+            </encodings>
+          </pane>
+          <pane id='2' selection-relaxation-option='selection-relaxation-allow' y-axis-name='[federated.15312321wrxb7m1456cdx1v0qw9c].[usr:Calculation_635289039898890240:qk]'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Bar' />
+            <encodings>
+              <color column='[federated.15312321wrxb7m1456cdx1v0qw9c].[:Measure Names]' />
+            </encodings>
+          </pane>
+        </panes>
+        <rows>([federated.15312321wrxb7m1456cdx1v0qw9c].[usr:Calculation_635289039900323844:qk] + [federated.15312321wrxb7m1456cdx1v0qw9c].[usr:Calculation_635289039898890240:qk])</rows>
+        <cols>[federated.15312321wrxb7m1456cdx1v0qw9c].[none:Age (bin):ok]</cols>
+      </table>
+      <simple-id uuid='{5AE6E7AF-9952-4C54-AB86-E69EB90E981C}' />
+    </worksheet>
+    <worksheet name='customers by age'>
+      <table>
+        <view>
+          <datasources>
+            <datasource caption='Databel - Data' name='federated.15312321wrxb7m1456cdx1v0qw9c' />
+          </datasources>
+          <datasource-dependencies datasource='federated.15312321wrxb7m1456cdx1v0qw9c'>
+            <column caption='Age (bin)' datatype='integer' name='[Age (bin)]' role='dimension' type='ordinal'>
+              <calculation class='bin' decimals='0' formula='[Age]' peg='0' size='5' />
+            </column>
+            <column datatype='integer' name='[Age]' role='measure' type='quantitative' />
+            <column caption='Number of Customers' datatype='integer' name='[Calculation_635289039898890240]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='COUNT([Customer ID])' />
+            </column>
+            <column caption='Churned' datatype='integer' name='[Calculation_635289039899938818]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='IF [Churn Label] = &quot;Yes&quot; THEN 1 ELSE 0 END' />
+            </column>
+            <column caption='Number of Churned Customers' datatype='integer' name='[Calculation_635289039900139523]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='SUM([Calculation_635289039899938818])' />
+            </column>
+            <column caption='Churn Rate' datatype='real' default-format='p0.00%' name='[Calculation_635289039900323844]' role='measure' type='quantitative'>
+              <calculation class='tableau' formula='[Calculation_635289039900139523] / [Calculation_635289039898890240]' />
+            </column>
+            <column datatype='string' name='[Churn Label]' role='dimension' type='nominal' />
+            <column datatype='string' name='[Customer ID]' role='dimension' type='nominal' />
+            <column datatype='string' name='[Group]' role='dimension' type='nominal' />
+            <column-instance column='[Age (bin)]' derivation='None' name='[none:Age (bin):ok]' pivot='key' type='ordinal' />
+            <column-instance column='[Group]' derivation='None' name='[none:Group:nk]' pivot='key' type='nominal' />
+            <column-instance column='[Calculation_635289039899938818]' derivation='Sum' name='[pcto:sum:Calculation_635289039899938818:qk:2]' pivot='key' type='quantitative'>
+              <table-calc ordering-type='Columns' type='PctTotal' />
+            </column-instance>
+            <column-instance column='[Calculation_635289039898890240]' derivation='User' name='[pcto:usr:Calculation_635289039898890240:qk]' pivot='key' type='quantitative'>
+              <table-calc ordering-type='Columns' type='PctTotal' />
+            </column-instance>
+            <column-instance column='[Calculation_635289039900323844]' derivation='User' name='[usr:Calculation_635289039900323844:qk]' pivot='key' type='quantitative' />
+          </datasource-dependencies>
+          <filter class='categorical' column='[federated.15312321wrxb7m1456cdx1v0qw9c].[:Measure Names]'>
+            <groupfilter function='union' user:op='manual'>
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.15312321wrxb7m1456cdx1v0qw9c].[usr:Calculation_635289039900323844:qk]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.15312321wrxb7m1456cdx1v0qw9c].[pcto:sum:Calculation_635289039899938818:qk:2]&quot;' />
+              <groupfilter function='member' level='[:Measure Names]' member='&quot;[federated.15312321wrxb7m1456cdx1v0qw9c].[pcto:usr:Calculation_635289039898890240:qk]&quot;' />
+            </groupfilter>
+          </filter>
+          <manual-sort column='[federated.15312321wrxb7m1456cdx1v0qw9c].[:Measure Names]' direction='ASC'>
+            <dictionary>
+              <bucket>&quot;[federated.15312321wrxb7m1456cdx1v0qw9c].[usr:Calculation_635289039900323844:qk]&quot;</bucket>
+              <bucket>&quot;[federated.15312321wrxb7m1456cdx1v0qw9c].[pcto:sum:Calculation_635289039899938818:qk:2]&quot;</bucket>
+              <bucket>&quot;[federated.15312321wrxb7m1456cdx1v0qw9c].[pcto:usr:Calculation_635289039898890240:qk]&quot;</bucket>
+            </dictionary>
+          </manual-sort>
+          <slices>
+            <column>[federated.15312321wrxb7m1456cdx1v0qw9c].[:Measure Names]</column>
+          </slices>
+          <aggregation value='true' />
+        </view>
+        <style>
+          <style-rule element='cell'>
+            <format attr='width' field='[federated.15312321wrxb7m1456cdx1v0qw9c].[:Measure Names]' value='126' />
+          </style-rule>
+        </style>
+        <panes>
+          <pane selection-relaxation-option='selection-relaxation-allow'>
+            <view>
+              <breakdown value='auto' />
+            </view>
+            <mark class='Automatic' />
+            <encodings>
+              <text column='[federated.15312321wrxb7m1456cdx1v0qw9c].[Multiple Values]' />
+            </encodings>
+            <style>
+              <style-rule element='mark'>
+                <format attr='mark-labels-cull' value='true' />
+                <format attr='mark-labels-show' value='true' />
+              </style-rule>
+              <style-rule element='pane'>
+                <format attr='minwidth' value='-1' />
+                <format attr='maxwidth' value='-1' />
+              </style-rule>
+            </style>
+          </pane>
+        </panes>
+        <rows>([federated.15312321wrxb7m1456cdx1v0qw9c].[none:Age (bin):ok] / [federated.15312321wrxb7m1456cdx1v0qw9c].[none:Group:nk])</rows>
+        <cols>[federated.15312321wrxb7m1456cdx1v0qw9c].[:Measure Names]</cols>
+        <show-full-range>
+          <column>[federated.15312321wrxb7m1456cdx1v0qw9c].[Age (bin)]</column>
+        </show-full-range>
+      </table>
+      <simple-id uuid='{F3DEECE2-1902-4090-94F7-03D9D3524F4C}' />
+    </worksheet>
   </worksheets>
   <windows source-height='44'>
     <window class='worksheet' name='Datacheck'>
@@ -1473,7 +1637,7 @@
       </viewpoint>
       <simple-id uuid='{BE4AA999-670E-4399-B39D-48B6E50C6F8B}' />
     </window>
-    <window class='worksheet' maximized='true' name='Churn rate by state'>
+    <window class='worksheet' name='Churn rate by state'>
       <cards>
         <edge name='left'>
           <strip size='160'>
@@ -1499,7 +1663,62 @@
           </strip>
         </edge>
       </cards>
+      <viewpoint>
+        <default-map-tool-selection tool='1' />
+      </viewpoint>
       <simple-id uuid='{4FA001BF-E904-4F52-90B6-8E841F3731D3}' />
+    </window>
+    <window class='worksheet' name='customers by age'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+            <card type='measures' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='30'>
+            <card type='title' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{C2F05BEE-2F29-4EF3-A445-715BCCF2E269}' />
+    </window>
+    <window class='worksheet' maximized='true' name='customer age vs churn rate'>
+      <cards>
+        <edge name='left'>
+          <strip size='160'>
+            <card type='pages' />
+            <card type='filters' />
+            <card type='marks' />
+          </strip>
+        </edge>
+        <edge name='top'>
+          <strip size='2147483647'>
+            <card type='columns' />
+          </strip>
+          <strip size='2147483647'>
+            <card type='rows' />
+          </strip>
+          <strip size='30'>
+            <card type='title' />
+          </strip>
+        </edge>
+        <edge name='right'>
+          <strip size='160'>
+            <card pane-specification-id='1' param='[federated.15312321wrxb7m1456cdx1v0qw9c].[:Measure Names]' type='color' />
+          </strip>
+        </edge>
+      </cards>
+      <simple-id uuid='{79EAC1BB-7B90-4F22-9BAF-5FF60A09DAE9}' />
     </window>
   </windows>
 </workbook>
